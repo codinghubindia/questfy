@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Shield, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
 import { Notification } from '../components/ui/Notification';
 import { useNotification } from '../hooks/useNotification';
 import { useAuth } from '../hooks/useAuth';
+import logoSvg from '../assets/logo/logo.svg';
 
 export const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -122,10 +123,7 @@ export const Signup: React.FC = () => {
           <Card className="p-8 bg-[#060a14] backdrop-blur-xl border-2 border-cyan-400/30 relative group overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10" />
             <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse-glow relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-2xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-                <Mail className="w-10 h-10 text-white relative z-10" />
-              </div>
+              <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[10rem] -mt-[2rem] mx-auto -mb-[3rem] text-white relative z-10" />
               
               <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4">
                 Agent Profile Created
@@ -223,10 +221,7 @@ export const Signup: React.FC = () => {
       
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-2xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-            <Shield className="w-10 h-10 text-white relative z-10" />
-          </div>
+          <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[10rem] mx-auto -mb-[3rem]" />
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
             Agent Initialization
           </h1>

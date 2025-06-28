@@ -7,6 +7,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { useAuth } from '../../hooks/useAuth';
 import { dbService } from '../../services/supabase';
 import type { Skill, Quest, QuestCompletion } from '../../types';
+import logoSvg from '../../assets/logo/logo.svg';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -62,85 +63,168 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-8">
       {/* Enhanced Welcome Header */}
       <div className="text-center relative mb-12">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl" />
-        <div className="relative bg-gradient-to-br from-[#060a14]/95 via-[#0a0f1d]/90 to-[#060a14]/95 backdrop-blur-md border-2 border-cyan-400/20 rounded-2xl p-8 overflow-hidden shadow-xl shadow-cyan-500/5">
-          {/* Floating particles */}
+        {/* Enhanced background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,rgba(56,189,248,0.05)_0deg,rgba(139,92,246,0.05)_120deg,rgba(14,165,233,0.05)_240deg)]" />
+        </div>
+
+        <div className="relative bg-gradient-to-br from-[#060a14]/95 via-[#0a0f1d]/90 to-[#060a14]/95 backdrop-blur-md border border-cyan-400/20 rounded-2xl overflow-hidden shadow-xl shadow-cyan-500/5">
+          {/* Animated border effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-purple-500/20 to-blue-500/20 animate-border-flow" />
+          
+          {/* Floating particles with enhanced effects */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-4 left-8 w-2 h-2 bg-cyan-400/30 rounded-full animate-float" style={{ animationDelay: '0s' }} />
-            <div className="absolute top-12 right-12 w-1 h-1 bg-purple-400/40 rounded-full animate-float" style={{ animationDelay: '1s' }} />
-            <div className="absolute bottom-8 left-16 w-1 h-1 bg-blue-400/30 rounded-full animate-float" style={{ animationDelay: '2s' }} />
-            <div className="absolute bottom-4 right-8 w-2 h-2 bg-cyan-400/20 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-gradient-to-r from-cyan-400/30 to-blue-400/30 rounded-full animate-float"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 0.5}s`,
+                  animationDuration: `${3 + Math.random() * 2}s`
+                }}
+              />
+            ))}
           </div>
           
-          {/* Hexagonal pattern background */}
+          {/* Enhanced hexagonal pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMEwzNC42NDEgMTBWMzBMMjAgNDBMNS4zNTkgMzBWMTBMMjAgMFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBmMTcyYTIyIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] bg-[length:40px_40px]" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMEwzNC42NDEgMTBWMzBMMjAgNDBMNS4zNTkgMzBWMTBMMjAgMFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBmMTcyYTIyIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] bg-[length:40px_40px] animate-pulse-slow" />
           </div>
           
-          {/* Animated scan line */}
+          {/* Enhanced scan lines */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,#0f172a88_50%)] bg-[length:100%_4px] animate-scan" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_50%,#0f172a44_50%)] bg-[length:4px_100%] animate-scan-horizontal" />
           </div>
           
-          <div className="relative z-10">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center animate-pulse-glow relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-                <Shield className="w-10 h-10 text-white relative z-10" />
-              </div>
-              {agentStats && (
-                <div className={`px-4 py-2 bg-[#050810] bg-opacity-95 border-2 border-${agentStats.rank.color.split(' ')[1].replace('from-', '')}/40 rounded-full relative group overflow-hidden shadow-md shadow-${agentStats.rank.color.split(' ')[1].replace('from-', '')}/20`}>
-                  <div className={`absolute inset-0 bg-gradient-to-r ${agentStats.rank.color} opacity-10 group-hover:opacity-20 -translate-x-full group-hover:translate-x-full transition-all duration-1000`} />
-                  <span className={`text-sm font-bold bg-gradient-to-r ${agentStats.rank.color} bg-clip-text text-transparent`}>
-                    {agentStats.rank.name}
-                  </span>
+          <div className="relative z-10 p-8">
+            {/* Enhanced logo with glow effect */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-3xl animate-pulse-slow" />
+              <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[15vh] mx-auto -mb-[2rem] relative z-10 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]" />
+            </div>
+            
+            {agentStats && (
+              <div className="text-center space-y-8">
+                <div className="relative">
+                  <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent animate-gradient-x">
+                    Welcome back, {agentStats.agentName}
+                  </h2>
+                  <div className="mt-3 inline-flex items-center gap-2 px-6 py-2 bg-[#060a14] border border-cyan-400/30 rounded-full relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/5 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"/>
+                    <span className="text-cyan-400 font-mono text-sm tracking-wider relative z-10">NEURAL LINK ESTABLISHED</span>
+                  </div>
                 </div>
-              )}
-            </div>
-            
-            <div className="relative mb-6">
-              <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent mb-2 relative z-10">
-                Welcome back, Agent {user?.user_metadata?.name || 'Operative'}
-              </h1>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-blue-500/20 to-purple-500/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-lg text-white/70 mb-6">
-              <div className="flex items-center justify-center gap-2 bg-[#060a14]/80 border border-green-400/20 rounded-xl p-3 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/5 to-green-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                <span className="font-mono relative z-10">SYSTEM ONLINE</span>
+
+                {/* Enhanced Stats Display */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
+                  {/* Agent Level Card */}
+                  <div className="bg-[#060a14]/80 backdrop-blur-sm border border-cyan-400/20 rounded-xl p-5 relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/5 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_70%)]" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-cyan-400/70 font-mono tracking-wider">AGENT LEVEL</span>
+                        <Star className="w-5 h-5 text-yellow-400 animate-pulse-slow" />
+                      </div>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-3xl font-bold text-yellow-400">{agentStats.agentLevel}</span>
+                        <div className="flex items-center gap-1 text-yellow-400/70">
+                          <span className="text-xs font-mono">NEXT</span>
+                          <span className="text-sm font-bold">{agentStats.agentLevel + 1}</span>
+                        </div>
+                      </div>
+                      <div className="h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full transition-all duration-500 relative group-hover:shadow-[0_0_10px_rgba(234,179,8,0.3)]"
+                          style={{ width: `${(agentStats.totalXP % 500) / 5}%` }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Total XP Card */}
+                  <div className="bg-[#060a14]/80 backdrop-blur-sm border border-blue-400/20 rounded-xl p-5 relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-white/5 to-blue-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_50%,rgba(96,165,250,0.1),transparent_70%)]" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-blue-400/70 font-mono tracking-wider">TOTAL XP</span>
+                        <Award className="w-5 h-5 text-blue-400 animate-pulse-slow" />
+                      </div>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-3xl font-bold text-blue-400">{totalXP}</span>
+                        <span className="text-xs text-blue-400/70 font-mono">POINTS</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden">
+                          <div className="h-full w-full bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-full animate-pulse-slow" />
+                        </div>
+                        <span className="text-xs text-blue-400/70 font-mono">+{agentStats.xpForNextLevel}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mission Status Card */}
+                  <div className="bg-[#060a14]/80 backdrop-blur-sm border border-purple-400/20 rounded-xl p-5 relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-white/5 to-purple-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_50%,rgba(167,139,250,0.1),transparent_70%)]" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-purple-400/70 font-mono tracking-wider">MISSION STATUS</span>
+                        <Activity className="w-5 h-5 text-purple-400 animate-pulse-slow" />
+                      </div>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-3xl font-bold text-purple-400">{completedQuests}</span>
+                        <span className="text-xs text-purple-400/70 font-mono">COMPLETED</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-purple-400/70 font-mono">THIS WEEK</span>
+                        <div className="flex-1 h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full transition-all duration-500"
+                            style={{ width: `${(weeklyCompletions / 7) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-purple-400 font-mono font-bold">{weeklyCompletions}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced System Status Indicators */}
+                <div className="flex items-center justify-center gap-4 text-sm">
+                  <div className="px-4 py-2 bg-[#060a14]/80 border border-green-400/20 rounded-full relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-white/5 to-green-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="relative z-10 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                      <span className="font-mono text-green-400 tracking-wider">SYSTEM ONLINE</span>
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 bg-[#060a14]/80 border border-cyan-400/20 rounded-full relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/5 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="relative z-10 flex items-center gap-2">
+                      <Brain className="w-4 h-4 text-cyan-400" />
+                      <span className="font-mono text-cyan-400 tracking-wider">AI READY</span>
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 bg-[#060a14]/80 border border-purple-400/20 rounded-full relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-white/5 to-purple-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <div className="relative z-10 flex items-center gap-2">
+                      <Cpu className="w-4 h-4 text-purple-400" />
+                      <span className="font-mono text-purple-400 tracking-wider">MISSION CONTROL</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div className="flex items-center justify-center gap-2 bg-[#060a14]/80 border border-cyan-400/20 rounded-xl p-3 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/5 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <Brain className="w-5 h-5 text-cyan-400" />
-                <span className="font-mono relative z-10">AI READY</span>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 bg-[#060a14]/80 border border-purple-400/20 rounded-xl p-3 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-white/5 to-purple-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <Cpu className="w-5 h-5 text-purple-400" />
-                <span className="font-mono relative z-10">MISSION CONTROL ACTIVE</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center gap-4 text-xl text-white/80 font-mono">
-              <div className="flex items-center gap-2">
-                <span className="text-cyan-400">Ready for next mission deployment</span>
-                <span className="w-2 h-2 bg-cyan-400 rounded-full animate-ping" />
-              </div>
-              <div className="w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-400" />
-                <span className="font-bold bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">Level {agentStats ? agentStats.agentLevel : '1'}</span>
-              </div>
-              <div className="w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-purple-400" />
-                <span className="font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">{totalXP} Total XP</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

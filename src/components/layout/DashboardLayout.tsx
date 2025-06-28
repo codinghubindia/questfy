@@ -49,7 +49,7 @@ export const DashboardLayout: React.FC = () => {
       <div className="fixed top-0 left-0 right-0 h-8 bg-[#020617]/80 border-b border-cyan-400/20 backdrop-blur-sm z-50 px-4 flex items-center justify-between text-xs font-mono">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-cyan-400">
-            <img src="/src/assets/logo/logo.svg" alt="Questfy Logo" className="w-4 h-4" />
+            <img src="/src/assets/logo/logo.svg" alt="Questfy Logo" className="w-auto h-[4.5rem]" />
             <span>SYSTEM ACTIVE</span>
           </div>
           <div className="flex items-center gap-2 text-cyan-400/70">

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { authService, dbService } from '../services/supabase';
 import { Loading } from '../components/ui/Loading';
+import logoSvg from '../assets/logo/logo.svg';
 
 export const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
@@ -97,10 +98,7 @@ export const AuthCallback: React.FC = () => {
       
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-2xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-            <Shield className="w-10 h-10 text-white relative z-10" />
-          </div>
+          <img src={logoSvg} alt="Questfy Logo" className="w-24 h-24 mx-auto mb-4" />
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
             Email Confirmation
           </h1>

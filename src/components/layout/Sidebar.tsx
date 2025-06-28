@@ -137,18 +137,16 @@ export const Sidebar: React.FC = () => {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Logo */}
-        <div className="relative p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center animate-pulse-glow relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-lg blur opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-              <img src={logoSvg} alt="Questfy Logo" className="w-6 h-6 text-white relative z-10" />
-            </div>
-            <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                QUESTFY
-              </span>
-              <div className="flex items-center gap-2 mt-1">
+
+        {/* Agent Status */}
+        <div className="mt-1 p-3 bg-[#060a14] border border-cyan-400/20 rounded-xl shadow-inner mb-4 shadow-cyan-500/5">
+          {/* Logo */}
+          <div className="relative p-6 space-y-4">
+            <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[12vh] mx-auto -mb-[3rem] -mt-[3rem]" />
+            
+            <div className="text-center">
+              
+              <div className="flex items-center justify-center gap-2 mt-1">
                 {agentStats ? (
                   <div className={`px-2 py-0.5 bg-[#060a14] border-2 border-${agentStats.rank.color.split(' ')[1].replace('from-', '')}/40 rounded-md flex items-center gap-1.5 shadow-sm shadow-${agentStats.rank.color.split(' ')[1].replace('from-', '')}/20`}>
                     <div className={`w-1.5 h-1.5 ${agentStats.rank.color.split(' ')[1].replace('from-', 'bg-')} rounded-full animate-pulse`} />
@@ -162,45 +160,40 @@ export const Sidebar: React.FC = () => {
                     <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent uppercase tracking-wider">Initializing...</span>
                   </div>
                 )}
-                <span className="text-[10px] text-cyan-300/50 font-mono">v2.0.1</span>
               </div>
             </div>
           </div>
-          
-          {/* Agent Status */}
-          <div className="mt-4 p-3 bg-[#060a14] border border-cyan-400/20 rounded-xl shadow-inner shadow-cyan-500/5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-cyan-400/70 font-mono">AGENT STATUS</span>
-              <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
-                <span className="text-[10px] text-cyan-400/70 font-mono">ONLINE</span>
-              </div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-cyan-400/70 font-mono">AGENT STATUS</span>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+              <span className="text-[10px] text-cyan-400/70 font-mono">ONLINE</span>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-white/50 font-mono">XP</span>
-                {agentStats ? (
-                  <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-mono">
-                    {agentStats.totalXP}/{agentStats.agentLevel * 500}
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-cyan-400 font-mono">Loading...</span>
-                )}
-              </div>
-              <div className="h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden shadow-inner shadow-black/50">
-                <div 
-                  className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500 ease-out shadow-lg shadow-cyan-500/30" 
-                  style={{ width: `${calculateXpPercentage()}%` }}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-white/50 font-mono">RANK</span>
-                {agentStats ? (
-                  <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-mono">LEVEL {agentStats.agentLevel}</span>
-                ) : (
-                  <span className="text-[10px] text-cyan-400 font-mono">Loading...</span>
-                )}
-              </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-white/50 font-mono">XP</span>
+              {agentStats ? (
+                <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-mono">
+                  {agentStats.totalXP}/{agentStats.agentLevel * 500}
+                </span>
+              ) : (
+                <span className="text-[10px] text-cyan-400 font-mono">Loading...</span>
+              )}
+            </div>
+            <div className="h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden shadow-inner shadow-black/50">
+              <div 
+                className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500 ease-out shadow-lg shadow-cyan-500/30" 
+                style={{ width: `${calculateXpPercentage()}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-white/50 font-mono">RANK</span>
+              {agentStats ? (
+                <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-mono">LEVEL {agentStats.agentLevel}</span>
+              ) : (
+                <span className="text-[10px] text-cyan-400 font-mono">Loading...</span>
+              )}
             </div>
           </div>
         </div>
@@ -234,7 +227,7 @@ export const Sidebar: React.FC = () => {
         </nav>
 
         {/* Enhanced Sign Out Button */}
-        <div className="p-4 relative">
+        <div className="p-4 mt-auto mb-8 relative">
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
