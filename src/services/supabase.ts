@@ -14,7 +14,7 @@ export const authService = {
       password,
       options: {
         data: { name },
-        emailRedirectTo: 'https://questfy.netlify.app/auth/callback'
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
     return { data, error };
@@ -75,19 +75,16 @@ export const authService = {
   // Delete the actual authentication user
   async deleteUser() {
     try {
-      // This will delete the user from auth.users table
-      // Note: This requires the user to be authenticated
-      const { data, error } = await supabase.auth.admin.deleteUser(
+      const { error } = await supabase.auth.admin.deleteUser(
         (await supabase.auth.getUser()).data.user?.id || ''
       );
       
       if (error) {
-        // If admin delete fails, try the user delete method
-        const { error: userError } = await supabase.auth.deleteUser();
-        return { error: userError };
+        console.error('Error deleting auth user:', error);
+        return { error };
       }
       
-      return { data, error: null };
+      return { error: null };
     } catch (error) {
       console.error('Error deleting auth user:', error);
       return { error };
@@ -363,7 +360,7 @@ export const dbService = {
         // Even if auth deletion fails, we've cleaned up the data
         // This might happen due to permissions, but the user data is gone
         return { 
-          error: new Error(`Data deleted successfully, but failed to remove authentication user: ${authError.message}`)
+          error: new Error(`Data deleted successfully, but failed to remove authentication user: ${authError instanceof Error ? authError.message : 'Unknown error'}`)
         };
       }
       

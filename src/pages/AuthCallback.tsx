@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { authService, dbService } from '../services/supabase';
@@ -60,17 +60,6 @@ export const AuthCallback: React.FC = () => {
     return <Loading fullScreen />;
   }
 
-  const getStatusIcon = () => {
-    switch (status) {
-      case 'loading':
-        return <Loader className="w-12 h-12 text-cyan-400 animate-spin" />;
-      case 'success':
-        return <CheckCircle className="w-12 h-12 text-green-400" />;
-      case 'error':
-        return <AlertCircle className="w-12 h-12 text-red-400" />;
-    }
-  };
-
   const getStatusColor = () => {
     switch (status) {
       case 'loading':
@@ -98,67 +87,79 @@ export const AuthCallback: React.FC = () => {
       
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <img src={logoSvg} alt="Questfy Logo" className="w-24 h-24 mx-auto mb-4" />
+          <div className="relative mb-4">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-3xl animate-pulse-slow" />
+            <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[15vh] mx-auto relative z-10 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]" />
+          </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
             Email Confirmation
           </h1>
           <p className="text-white/70 font-mono">Verifying your agent credentials</p>
         </div>
 
-        <Card className={`p-8 bg-[#060a14] backdrop-blur-xl border-2 ${getStatusColor()} text-center`}>
-          <div className="mb-6">
-            {getStatusIcon()}
-          </div>
-          
-          <h2 className="text-xl font-semibold text-white mb-4">
-            {status === 'loading' && 'Confirming Email...'}
-            {status === 'success' && 'Email Confirmed!'}
-            {status === 'error' && 'Confirmation Failed'}
-          </h2>
-          
-          <p className="text-white/80 mb-6 leading-relaxed">
-            {message}
-          </p>
+        <Card className={`p-8 text-center relative group overflow-hidden ${getStatusColor()}`} variant="auth" glass>
+          <div className="absolute inset-0 bg-gradient-cyberpunk" />
+          <div className="relative">
+            <div className="mb-6">
+              {status === 'success' ? (
+                <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
+              ) : status === 'error' ? (
+                <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
+              ) : null}
+            </div>
+            
+            <h2 className="text-xl font-semibold text-white mb-4">
+              {status === 'loading' && 'Confirming Email...'}
+              {status === 'success' && 'Email Confirmed!'}
+              {status === 'error' && 'Confirmation Failed'}
+            </h2>
+            
+            <p className="text-white/80 mb-6 leading-relaxed">
+              {message}
+            </p>
 
-          {status === 'error' && (
-            <div className="space-y-4">
-              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-200 text-sm">
-                  <strong>Common Issues:</strong>
-                </p>
-                <ul className="text-red-200 text-sm mt-2 space-y-1 text-left">
-                  <li>• Email confirmation link has expired</li>
-                  <li>• Link has already been used</li>
-                  <li>• Network connectivity issues</li>
-                </ul>
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                <Button
-                  onClick={() => navigate('/signup')}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                >
-                  Try Signing Up Again
-                </Button>
+            {status === 'error' && (
+              <div className="space-y-4">
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-200 text-sm">
+                    <strong>Common Issues:</strong>
+                  </p>
+                  <ul className="text-red-200 text-sm mt-2 space-y-1 text-left">
+                    <li>• Email confirmation link has expired</li>
+                    <li>• Link has already been used</li>
+                    <li>• Network connectivity issues</li>
+                  </ul>
+                </div>
                 
-                <Button
-                  onClick={() => navigate('/login')}
-                  variant="secondary"
-                  className="w-full bg-gradient-to-r from-slate-800/50 to-blue-900/50 border-cyan-400/30"
-                >
-                  Go to Login
-                </Button>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={() => navigate('/signup')}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 relative group overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/20 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <span className="relative z-10">Try Signing Up Again</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={() => navigate('/login')}
+                    variant="secondary"
+                    className="w-full bg-gradient-to-r from-slate-800/50 to-blue-900/50 border-cyan-400/30 relative group overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/5 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <span className="relative z-10">Go to Login</span>
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {status === 'success' && (
-            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-              <p className="text-green-200 text-sm">
-                Your agent profile is now active! You'll be redirected to the command center shortly.
-              </p>
-            </div>
-          )}
+            {status === 'success' && (
+              <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <p className="text-green-200 text-sm">
+                  Your agent profile is now active! You'll be redirected to the command center shortly.
+                </p>
+              </div>
+            )}
+          </div>
         </Card>
       </div>
     </div>

@@ -120,16 +120,21 @@ export const Signup: React.FC = () => {
         </Link>
         
         <div className="w-full max-w-md relative z-10">
-          <Card className="p-8 bg-[#060a14] backdrop-blur-xl border-2 border-cyan-400/30 relative group overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10" />
+          <div className="text-center mb-8">
+            <div className="relative mb-4">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-3xl animate-pulse-slow" />
+              <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[15vh] mx-auto relative z-10 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
+              Agent Profile Created
+            </h1>
+            <p className="text-white/70 font-mono">Awaiting system activation</p>
+          </div>
+
+          <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
+            <div className="absolute inset-0 bg-gradient-cyberpunk" />
             <div className="relative">
-              <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[10rem] -mt-[2rem] mx-auto -mb-[3rem] text-white relative z-10" />
-              
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4">
-                Agent Profile Created
-              </h1>
-              
-              <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg backdrop-blur-sm">
                 <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-3" />
                 <p className="text-white/80 mb-2">
                   Welcome, Agent <span className="text-cyan-400 font-medium">{formData.name}</span>!
@@ -139,7 +144,7 @@ export const Signup: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg backdrop-blur-sm">
                 <AlertCircle className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
                 <p className="text-white/80 text-sm mb-2">
                   <strong>Activation Required</strong>
@@ -173,7 +178,7 @@ export const Signup: React.FC = () => {
                 </Button>
               </div>
 
-              <div className="mt-6 p-3 bg-slate-800/30 rounded-lg">
+              <div className="mt-6 p-3 bg-slate-800/30 rounded-lg backdrop-blur-sm">
                 <p className="text-white/60 text-xs font-mono">
                   <strong>Note:</strong> If you don't receive the email within a few minutes, check your spam folder or contact support.
                 </p>
@@ -228,8 +233,8 @@ export const Signup: React.FC = () => {
           <p className="text-white/70 font-mono">Create your agent profile</p>
         </div>
 
-        <Card className="p-8 bg-[#060a14] backdrop-blur-xl border-2 border-cyan-400/30 relative group overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10" />
+        <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
+          <div className="absolute inset-0 bg-gradient-cyberpunk" />
           <div className="relative">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (

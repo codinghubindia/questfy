@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Cpu, Database, Server, Zap, Lock } from 'lucide-react';
+import logoSvg from '../../assets/logo/logo.svg';
 
 interface LoadingProps {
   fullScreen?: boolean;
@@ -82,7 +83,10 @@ export const Loading: React.FC<LoadingProps> = ({
   if (!fullScreen) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-xl animate-pulse-slow" />
+          <img src={logoSvg} alt="Questfy Logo" className="w-16 h-16 relative z-10" />
+        </div>
       </div>
     );
   }
@@ -124,51 +128,10 @@ export const Loading: React.FC<LoadingProps> = ({
       </div>
 
       <div className="relative flex flex-col items-center max-w-md w-full px-6">
-        {/* Enhanced Logo with hexagon shape */}
+        {/* Logo with glow effect */}
         <div className="relative mb-8">
-          <div className="absolute inset-0 bg-cyan-400/20 blur-2xl animate-pulse" />
-          <div className="relative">
-            <svg width="120" height="120" viewBox="0 0 120 120" className="mx-auto">
-              {/* Hexagon border with glow */}
-              <defs>
-                <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0ea5e9" />
-                  <stop offset="100%" stopColor="#3b82f6" />
-                </linearGradient>
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="5" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-              
-              {/* Hexagon background */}
-              <path 
-                d="M60 10L110 40V80L60 110L10 80V40L60 10Z" 
-                fill="#0a0f1d" 
-                stroke="url(#hexGradient)" 
-                strokeWidth="2" 
-                filter="url(#glow)" 
-                className="animate-pulse-glow"
-              />
-              
-              {/* Inner details */}
-              <path 
-                d="M60 30L85 45V75L60 90L35 75V45L60 30Z" 
-                fill="none" 
-                stroke="url(#hexGradient)" 
-                strokeWidth="1" 
-                opacity="0.5" 
-              />
-              
-              {/* Shield icon */}
-              <g transform="translate(42, 40) scale(1.5)">
-                <path 
-                  d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" 
-                  fill="url(#hexGradient)" 
-                />
-              </g>
-            </svg>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-3xl animate-pulse-slow" />
+          <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[15vh] mx-auto relative z-10 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]" />
         </div>
 
         {/* Loading text with typewriter effect */}
@@ -206,11 +169,7 @@ export const Loading: React.FC<LoadingProps> = ({
                   : 'text-white/30'
               }`}
             >
-              {index <= loadingStep ? (
-                <step.icon className="w-5 h-5 animate-spin-slow" />
-              ) : (
-                <div className="w-5 h-5 rounded-full border-2 border-white/30" />
-              )}
+              <step.icon className={`w-5 h-5 ${index <= loadingStep ? '' : 'opacity-30'}`} />
               <span>{step.text}</span>
               {index === loadingStep && loadingPercent < 100 && (
                 <span className="ml-auto flex items-center gap-1">

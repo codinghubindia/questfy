@@ -5,7 +5,7 @@ interface CardProps {
   className?: string;
   hover?: boolean;
   glass?: boolean;
-  variant?: 'default' | 'dark' | 'cyan' | 'purple' | 'green';
+  variant?: 'default' | 'dark' | 'cyan' | 'purple' | 'green' | 'auth';
 }
 
 export const Card: React.FC<CardProps> = ({ 
@@ -21,6 +21,9 @@ export const Card: React.FC<CardProps> = ({
   
   if (glass) {
     switch (variant) {
+      case 'auth':
+        variantClasses = 'bg-[#060a14]/95 backdrop-blur-xl border-2 border-cyan-400/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]';
+        break;
       case 'dark':
         variantClasses = 'bg-[#060a14]/95 backdrop-blur-md border-2 border-white/10';
         break;
@@ -34,10 +37,19 @@ export const Card: React.FC<CardProps> = ({
         variantClasses = 'bg-[#060a14]/95 backdrop-blur-md border-2 border-green-400/20';
         break;
       default:
-        variantClasses = 'bg-white/5 backdrop-blur-md border border-white/10';
+        variantClasses = 'bg-[#060a14]/95 backdrop-blur-md border border-white/10';
     }
   } else {
-    variantClasses = 'bg-white shadow-lg';
+    switch (variant) {
+      case 'auth':
+        variantClasses = 'bg-[#060a14] border-2 border-cyan-400/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]';
+        break;
+      case 'dark':
+        variantClasses = 'bg-[#060a14] border-2 border-white/10';
+        break;
+      default:
+        variantClasses = 'bg-white shadow-lg';
+    }
   }
   
   const hoverClasses = hover 

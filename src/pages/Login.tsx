@@ -81,8 +81,8 @@ export const Login: React.FC = () => {
           <p className="text-white/70 font-mono">Access your command center</p>
         </div>
 
-        <Card className="p-8 bg-[#060a14] backdrop-blur-xl border-2 border-cyan-400/30 relative group overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10" />
+        <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
+          <div className="absolute inset-0 bg-gradient-cyberpunk" />
           <div className="relative">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (

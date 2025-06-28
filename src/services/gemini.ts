@@ -12,6 +12,8 @@ interface QuestGenerationRequest {
 
 export const geminiService = {
   async generateQuest(params: QuestGenerationRequest) {
+    console.log('Generating quest for:', params);
+    console.log('GEMINI_API_KEY:', GEMINI_API_KEY);
     if (!GEMINI_API_KEY) {
       // Fallback to mock data when API key is not provided
       return this.getMockQuest(params);
