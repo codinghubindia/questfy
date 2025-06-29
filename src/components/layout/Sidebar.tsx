@@ -96,7 +96,7 @@ export const Sidebar: React.FC = () => {
       {/* Mobile Menu Button - Fixed positioning */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-[60] w-12 h-12 bg-[#0f172a]/80 backdrop-blur-md border border-cyan-400/30 rounded-xl flex items-center justify-center text-white shadow-lg hover:bg-[#0f172a] transition-colors duration-200"
+        className="lg:hidden fixed top-12 left-4 z-[60] w-12 h-12 bg-[#0f172a]/80 backdrop-blur-md border border-cyan-400/30 rounded-xl flex items-center justify-center text-white shadow-lg hover:bg-[#0f172a] transition-colors duration-200"
       >
         <Menu className="w-6 h-6" />
       </button>

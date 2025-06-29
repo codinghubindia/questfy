@@ -84,52 +84,52 @@ export const Login: React.FC = () => {
         <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
           <div className="absolute inset-0 bg-gradient-cyberpunk" />
           <div className="relative">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm font-mono">
-                  {error}
-                </div>
-              )}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm font-mono">
+                {error}
+              </div>
+            )}
 
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                icon={<Mail className="w-5 h-5 text-gray-400" />}
-                required
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              icon={<Mail className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                icon={<Lock className="w-5 h-5 text-gray-400" />}
-                required
+            <Input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              icon={<Lock className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Button
-                type="submit"
-                size="lg"
+            <Button
+              type="submit"
+              size="lg"
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/25 relative group overflow-hidden"
-                loading={loading}
-              >
+              loading={loading}
+            >
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/20 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 <span className="relative z-10">Authenticate Agent</span>
-              </Button>
-            </form>
+            </Button>
+          </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-white/70 font-mono">
-                Need agent credentials?{' '}
+          <div className="mt-6 text-center">
+            <p className="text-white/70 font-mono">
+              Need agent credentials?{' '}
                 <Link to="/signup" className="text-cyan-400 hover:text-cyan-300 font-medium relative group">
-                  Initialize new agent
+                Initialize new agent
                   <span className="absolute bottom-0 left-0 w-full h-px bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                </Link>
-              </p>
+              </Link>
+            </p>
             </div>
           </div>
         </Card>

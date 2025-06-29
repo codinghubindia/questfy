@@ -65,7 +65,7 @@ export const Dashboard: React.FC = () => {
       <div className="text-center relative mb-12">
         {/* Enhanced background effects */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl" />
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,rgba(56,189,248,0.05)_0deg,rgba(139,92,246,0.05)_120deg,rgba(14,165,233,0.05)_240deg)]" />
         </div>
@@ -93,13 +93,13 @@ export const Dashboard: React.FC = () => {
           {/* Enhanced hexagonal pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMEwzNC42NDEgMTBWMzBMMjAgNDBMNS4zNTkgMzBWMTBMMjAgMFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBmMTcyYTIyIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] bg-[length:40px_40px] animate-pulse-slow" />
-          </div>
+              </div>
           
           {/* Enhanced scan lines */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,#0f172a88_50%)] bg-[length:100%_4px] animate-scan" />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_50%,#0f172a44_50%)] bg-[length:4px_100%] animate-scan-horizontal" />
-          </div>
+                </div>
           
           <div className="relative z-10 p-8">
             {/* Enhanced logo with glow effect */}
@@ -162,8 +162,8 @@ export const Dashboard: React.FC = () => {
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-3xl font-bold text-blue-400">{totalXP}</span>
                         <span className="text-xs text-blue-400/70 font-mono">POINTS</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+              </div>
+              <div className="flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden">
                           <div className="h-full w-full bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-full animate-pulse-slow" />
                         </div>
@@ -184,8 +184,8 @@ export const Dashboard: React.FC = () => {
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-3xl font-bold text-purple-400">{completedQuests}</span>
                         <span className="text-xs text-purple-400/70 font-mono">COMPLETED</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+              </div>
+              <div className="flex items-center gap-2">
                         <span className="text-xs text-purple-400/70 font-mono">THIS WEEK</span>
                         <div className="flex-1 h-1.5 bg-[#0a0f1d] rounded-full overflow-hidden">
                           <div 
@@ -196,9 +196,9 @@ export const Dashboard: React.FC = () => {
                         <span className="text-xs text-purple-400 font-mono font-bold">{weeklyCompletions}</span>
                       </div>
                     </div>
-                  </div>
-                </div>
-
+              </div>
+            </div>
+            
                 {/* Enhanced System Status Indicators */}
                 <div className="flex items-center justify-center gap-4 text-sm">
                   <div className="px-4 py-2 bg-[#060a14]/80 border border-green-400/20 rounded-full relative group overflow-hidden">

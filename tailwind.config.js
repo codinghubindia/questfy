@@ -87,8 +87,8 @@ export default {
           },
         },
         'notification-enter': {
-          '0%': { transform: 'translateX(100%)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
+          '0%': { transform: 'translate(-50%, -100%)', opacity: '0' },
+          '100%': { transform: 'translate(-50%, 0)', opacity: '1' },
         },
         'progress-bar': {
           '0%': { width: '100%' },

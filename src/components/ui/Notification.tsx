@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle, X, Zap, AlertTriangle, Info } from 'lucide-react';
 
 interface NotificationProps {
@@ -61,13 +62,12 @@ export const Notification: React.FC<NotificationProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      
+  const notificationContent = (
+    <div className="fixed top-[30%] left-[60%] -translate-x-1/2 z-[9999] pointer-events-none" style={{ maxWidth: '90vw' }}>
       {/* Notification Card */}
-      <div className={`relative bg-gradient-to-br ${getGradientColors()} backdrop-blur-md border-2 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl animate-notification-enter`}>
+      <div 
+        className={`relative bg-gradient-to-br ${getGradientColors()} backdrop-blur-md border-2 rounded-2xl p-6 w-full max-w-md shadow-2xl animate-notification-enter pointer-events-auto`}
+      >
         {/* Pulsing Glow Effect */}
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/20 via-blue-500/20 to-purple-500/20 animate-pulse-glow -z-10" />
         
@@ -108,5 +108,11 @@ export const Notification: React.FC<NotificationProps> = ({
         </div>
       </div>
     </div>
+  );
+
+  // Create a portal to render the notification at the root level
+  return createPortal(
+    notificationContent,
+    document.body
   );
 };

@@ -130,58 +130,58 @@ export const Signup: React.FC = () => {
             </h1>
             <p className="text-white/70 font-mono">Awaiting system activation</p>
           </div>
-
+            
           <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
             <div className="absolute inset-0 bg-gradient-cyberpunk" />
             <div className="relative">
               <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg backdrop-blur-sm">
-                <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-3" />
-                <p className="text-white/80 mb-2">
-                  Welcome, Agent <span className="text-cyan-400 font-medium">{formData.name}</span>!
-                </p>
-                <p className="text-white/70 text-sm">
-                  Your agent profile has been created successfully.
-                </p>
-              </div>
+              <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-3" />
+              <p className="text-white/80 mb-2">
+                Welcome, Agent <span className="text-cyan-400 font-medium">{formData.name}</span>!
+              </p>
+              <p className="text-white/70 text-sm">
+                Your agent profile has been created successfully.
+              </p>
+            </div>
 
               <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg backdrop-blur-sm">
-                <AlertCircle className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-                <p className="text-white/80 text-sm mb-2">
-                  <strong>Activation Required</strong>
-                </p>
-                <p className="text-white/70 text-sm">
-                  Please check your email at <span className="text-cyan-400 font-mono">{formData.email}</span> and click the activation link to complete your agent initialization.
-                </p>
-              </div>
+              <AlertCircle className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
+              <p className="text-white/80 text-sm mb-2">
+                <strong>Activation Required</strong>
+              </p>
+              <p className="text-white/70 text-sm">
+                Please check your email at <span className="text-cyan-400 font-mono">{formData.email}</span> and click the activation link to complete your agent initialization.
+              </p>
+            </div>
 
-              <div className="space-y-3">
-                <Button
-                  onClick={() => {
-                    setSignupComplete(false);
-                    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-                  }}
-                  variant="secondary"
+            <div className="space-y-3">
+              <Button
+                onClick={() => {
+                  setSignupComplete(false);
+                  setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                }}
+                variant="secondary"
                   className="w-full bg-gradient-to-r from-slate-800/50 to-blue-900/50 border-cyan-400/30 relative group overflow-hidden"
-                >
+              >
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/10 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                   <span className="relative z-10">Create Another Agent</span>
-                </Button>
-                
-                <Button
-                  asChild
+              </Button>
+              
+              <Button
+                asChild
                   className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 relative group overflow-hidden"
-                >
-                  <Link to="/login">
+              >
+                <Link to="/login">
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/20 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                     <span className="relative z-10">Access Command Center</span>
-                  </Link>
-                </Button>
-              </div>
+                </Link>
+              </Button>
+            </div>
 
               <div className="mt-6 p-3 bg-slate-800/30 rounded-lg backdrop-blur-sm">
-                <p className="text-white/60 text-xs font-mono">
-                  <strong>Note:</strong> If you don't receive the email within a few minutes, check your spam folder or contact support.
-                </p>
+              <p className="text-white/60 text-xs font-mono">
+                <strong>Note:</strong> If you don't receive the email within a few minutes, check your spam folder or contact support.
+              </p>
               </div>
             </div>
           </Card>
@@ -236,76 +236,76 @@ export const Signup: React.FC = () => {
         <Card className="p-8 relative group overflow-hidden" variant="auth" glass>
           <div className="absolute inset-0 bg-gradient-cyberpunk" />
           <div className="relative">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm font-mono">
-                  {error}
-                </div>
-              )}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm font-mono">
+                {error}
+              </div>
+            )}
 
-              <Input
+            <Input
                 type="text"
-                name="name"
+              name="name"
                 placeholder="Agent Name"
-                value={formData.name}
-                onChange={handleChange}
-                icon={<User className="w-5 h-5 text-gray-400" />}
-                required
+              value={formData.name}
+              onChange={handleChange}
+              icon={<User className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Input
+            <Input
                 type="email"
-                name="email"
+              name="email"
                 placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                icon={<Mail className="w-5 h-5 text-gray-400" />}
-                required
+              value={formData.email}
+              onChange={handleChange}
+              icon={<Mail className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Input
+            <Input
                 type="password"
-                name="password"
+              name="password"
                 placeholder="Create Password"
-                value={formData.password}
-                onChange={handleChange}
-                icon={<Lock className="w-5 h-5 text-gray-400" />}
-                required
+              value={formData.password}
+              onChange={handleChange}
+              icon={<Lock className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Input
+            <Input
                 type="password"
-                name="confirmPassword"
+              name="confirmPassword"
                 placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                icon={<Lock className="w-5 h-5 text-gray-400" />}
-                required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              icon={<Lock className="w-5 h-5 text-gray-400" />}
+              required
                 className="bg-[#0a0f1d] border-cyan-400/30 text-white placeholder-white/50"
-              />
+            />
 
-              <Button
-                type="submit"
-                size="lg"
+            <Button
+              type="submit"
+              size="lg"
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/25 relative group overflow-hidden"
-                loading={loading}
-              >
+              loading={loading}
+            >
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-white/20 to-cyan-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 <span className="relative z-10">Initialize Agent Profile</span>
-              </Button>
-            </form>
+            </Button>
+          </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-white/70 font-mono">
+          <div className="mt-6 text-center">
+            <p className="text-white/70 font-mono">
                 Already have credentials?{' '}
                 <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-medium relative group">
                   Access Command Center
                   <span className="absolute bottom-0 left-0 w-full h-px bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                </Link>
-              </p>
+              </Link>
+            </p>
             </div>
           </div>
         </Card>

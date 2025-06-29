@@ -15,7 +15,6 @@ export const useAuth = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', event, session?.user?.id);
       
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
@@ -23,7 +22,6 @@ export const useAuth = () => {
         // Check if profile exists, create if it doesn't
         const { data: profile } = await dbService.getProfile(session.user.id);
         if (!profile) {
-          console.log('Creating profile for new user');
           await dbService.createProfile(
             session.user.id,
             session.user.email || '',
@@ -31,7 +29,6 @@ export const useAuth = () => {
           );
         }
       } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out, clearing state');
         setUser(null);
         setLoading(false);
       } else {
@@ -55,7 +52,6 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    console.log('Starting fast logout process...');
     
     try {
       // Clear user state immediately for instant UI feedback

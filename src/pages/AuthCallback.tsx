@@ -24,7 +24,6 @@ export const AuthCallback: React.FC = () => {
           const { data: profile } = await dbService.getProfile(result.user.id);
           
           if (!profile) {
-            console.log('Creating profile for confirmed user');
             await dbService.createProfile(
               result.user.id,
               result.user.email || '',

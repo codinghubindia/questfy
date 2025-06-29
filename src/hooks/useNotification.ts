@@ -11,8 +11,16 @@ export const useNotification = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const showNotification = useCallback((data: NotificationData) => {
-    setNotification(data);
-    setIsVisible(true);
+    // First hide any existing notification
+    setIsVisible(false);
+    // Wait for fade out animation
+    setTimeout(() => {
+      setNotification(data);
+      // Wait a frame to ensure the new notification is ready
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+    }, 300);
   }, []);
 
   const hideNotification = useCallback(() => {

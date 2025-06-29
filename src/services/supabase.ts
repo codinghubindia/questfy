@@ -67,7 +67,6 @@ export const authService = {
 
   onAuthStateChange(callback: (event: string, session: any) => void) {
     return supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', event, session?.user?.id);
       callback(event, session);
     });
   },
@@ -102,7 +101,6 @@ export const authService = {
       }
       
       if (data.session) {
-        console.log('Email confirmed successfully, user logged in');
         return { success: true, user: data.session.user };
       }
       
@@ -345,14 +343,12 @@ export const dbService = {
   async deleteUserAccount(userId: string) {
     try {
       // Step 1: Delete all user data in order due to foreign key constraints
-      console.log('Deleting user data...');
       await this.deleteAllUserQuestCompletions(userId);
       await this.deleteAllUserQuests(userId);
       await this.deleteAllUserSkills(userId);
       await this.deleteProfile(userId);
       
       // Step 2: Delete the authentication user
-      console.log('Deleting authentication user...');
       const { error: authError } = await authService.deleteUser();
       
       if (authError) {
@@ -364,7 +360,6 @@ export const dbService = {
         };
       }
       
-      console.log('User account completely deleted');
       return { error: null };
     } catch (error) {
       console.error('Error during account deletion:', error);

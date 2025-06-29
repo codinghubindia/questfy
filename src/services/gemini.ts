@@ -1,6 +1,11 @@
 // Gemini Flash 2.0 API integration
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
+const GEMINI_API_KEYS = [
+  import.meta.env.VITE_GEMINI_API_KEY,
+  import.meta.env.VITE_GEMINI_API_KEY_BACKUP1,
+  import.meta.env.VITE_GEMINI_API_KEY_BACKUP2
+].filter(Boolean); // Filter out undefined or empty keys
+
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 interface QuestGenerationRequest {
   skillName: string;
@@ -11,134 +16,246 @@ interface QuestGenerationRequest {
 }
 
 export const geminiService = {
-  async generateQuest(params: QuestGenerationRequest) {
-    console.log('Generating quest for:', params);
-    console.log('GEMINI_API_KEY:', GEMINI_API_KEY);
-    if (!GEMINI_API_KEY) {
-      // Fallback to mock data when API key is not provided
-      return this.getMockQuest(params);
-    }
-
+  async tryWithApiKey(apiKey: string, params: QuestGenerationRequest) {
     try {
-      const prompt = `Generate a practical coding/skill quest for:
-      - Skill: ${params.skillName}
-      - Level: ${params.skillLevel}
-      - Difficulty: ${params.difficulty}
-      - Category: ${params.category || 'General'}
+      console.log('Attempting API call with key:', apiKey.slice(0, 5) + '...');
+      const prompt = this.constructPrompt(params);
       
-      The quest should be:
-      1. Practical and hands-on
-      2. Appropriate for the skill level
-      3. Completable in 15-90 minutes
-      4. Educational and engaging
-      
-      Return ONLY a JSON object with this exact structure:
-      {
-        "title": "Quest title (max 60 chars)",
-        "description": "Detailed description of what to do (max 200 chars)",
-        "estimated_time": number_in_minutes
-      }`;
+      const requestBody = {
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.8,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      };
 
-      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      console.log('Making API request to:', GEMINI_API_URL);
+      const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          }
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Response Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText
+        });
+        throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      const questText = result.candidates[0].content.parts[0].text;
+      console.log('API Response:', result);
+
+      if (!result.candidates || !result.candidates[0]) {
+        console.error('Invalid API response structure:', result);
+        throw new Error('Invalid API response structure');
+      }
+
+      // Extract the text from the response
+      const candidate = result.candidates[0];
+      let questText = '';
+
+      // Handle different response structures
+      if (candidate.content?.parts?.[0]?.text) {
+        questText = candidate.content.parts[0].text;
+      } else if (candidate.text) {
+        questText = candidate.text;
+      } else {
+        console.error('Unexpected response structure:', candidate);
+        throw new Error('Unexpected response structure');
+      }
+
+      console.log('Quest Text:', questText);
       
-      // Clean up the response to extract JSON
-      const jsonMatch = questText.match(/\{[\s\S]*\}/);
+      // Try to find JSON in the response text
+      const jsonMatch = questText.match(/\{[\s\S]*?\}/);
       if (!jsonMatch) {
-        throw new Error('No valid JSON found in response');
+        // If no JSON found, try to parse the entire response as JSON
+        try {
+          // Clean up the text - remove any markdown formatting if present
+          const cleanText = questText.replace(/```json\n|\n```/g, '').trim();
+          const quest = JSON.parse(cleanText);
+          return {
+            success: true,
+            data: {
+              ...quest,
+              difficulty: params.difficulty,
+            }
+          };
+        } catch (parseError) {
+          console.error('No JSON found in response:', questText);
+          throw new Error('No valid JSON found in response');
+        }
       }
       
-      const quest = JSON.parse(jsonMatch[0]);
-      
-      return {
-        data: {
-          ...quest,
-          difficulty: params.difficulty,
-        },
-        error: null
-      };
+      try {
+        const quest = JSON.parse(jsonMatch[0]);
+        return {
+          success: true,
+          data: {
+            ...quest,
+            difficulty: params.difficulty,
+          }
+        };
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError, 'Text:', jsonMatch[0]);
+        throw new Error('Failed to parse quest JSON');
+      }
     } catch (error) {
-      console.error('Gemini API error:', error);
-      // Fallback to mock data on error
+      console.error('API call failed:', error);
+      return { success: false, error };
+    }
+  },
+
+  async generateQuest(params: QuestGenerationRequest) {
+    console.log('Generating quest for:', params);
+    console.log('Available API keys:', GEMINI_API_KEYS.length);
+
+    if (GEMINI_API_KEYS.length === 0) {
+      console.error('No API keys available');
       return this.getMockQuest(params);
     }
+
+    // Try each API key in sequence until one works
+    for (const apiKey of GEMINI_API_KEYS) {
+      const result = await this.tryWithApiKey(apiKey, params);
+      if (result.success) {
+        return { data: result.data, error: null };
+      }
+      console.log('API key failed, trying next key...');
+    }
+
+    // If all API keys fail, fall back to mock data
+    console.log('All API keys failed, using mock data');
+    return this.getMockQuest(params);
+  },
+
+  constructPrompt(params: QuestGenerationRequest): string {
+    const difficultyLevels = {
+      beginner: "foundational concepts and basic implementations",
+      intermediate: "moderate complexity and real-world applications",
+      advanced: "complex problems and advanced techniques"
+    };
+
+    const skillLevelContext = `Level ${params.skillLevel} (${params.difficulty}) focusing on ${difficultyLevels[params.difficulty]}`;
+
+    return `You are an expert ${params.skillName} mentor. Create a practical quest for a student at ${skillLevelContext}.
+
+Previous quests completed: ${params.previousQuests?.join(", ") || "None"}
+Category focus: ${params.category || "General"}
+
+IMPORTANT: Respond with ONLY a valid JSON object. Do not include any other text, markdown formatting, or explanations.
+
+The JSON object must have this exact structure:
+{
+  "title": "Quest title (max 60 chars)",
+  "description": "Clear, actionable instructions with specific requirements (max 200 chars)",
+  "estimated_time": number_in_minutes,
+  "learning_outcomes": ["List of 2-3 specific skills or concepts learned"],
+  "prerequisites": ["List of required knowledge/tools"],
+  "success_criteria": ["2-3 specific checkpoints to verify completion"]
+}
+
+Requirements for the quest:
+1. Must be hands-on and practical
+2. Must be completable in 15-90 minutes
+3. Must teach valuable real-world skills
+4. Must match the skill level (${params.skillLevel}) and difficulty (${params.difficulty})
+5. Must build upon previous knowledge
+6. Must have clear, measurable outcomes`;
   },
 
   getMockQuest(params: QuestGenerationRequest) {
     const mockQuests = {
       'JavaScript Programming': [
         {
-          title: 'Build a Todo List Component',
-          description: 'Create a fully functional todo list using React hooks with add, delete, and toggle functionality.',
+          title: 'Build a Modern Todo App with React',
+          description: 'Create a todo app with React hooks, TypeScript, and local storage. Include filtering, sorting, and categories.',
           estimated_time: 45,
+          learning_outcomes: [
+            'React hooks and state management',
+            'TypeScript type safety',
+            'Local storage integration'
+          ],
+          prerequisites: ['Basic React knowledge', 'JavaScript fundamentals'],
+          success_criteria: [
+            'All CRUD operations work',
+            'Data persists after refresh',
+            'TypeScript has no errors'
+          ]
         },
         {
-          title: 'Implement Local Storage',
-          description: 'Add persistence to your web app by implementing localStorage to save user data.',
-          estimated_time: 30,
-        },
-        {
-          title: 'Create API Integration',
-          description: 'Connect to a REST API and handle loading, error, and success states properly.',
+          title: 'Real-time Data Dashboard',
+          description: 'Build a dashboard that displays real-time data using WebSocket connections and D3.js for visualizations.',
           estimated_time: 60,
-        },
-        {
-          title: 'Build a Form Validator',
-          description: 'Create a reusable form validation system with custom error messages.',
-          estimated_time: 40,
-        }
-      ],
-      'UI/UX Design': [
-        {
-          title: 'Design a Landing Page',
-          description: 'Create a modern, responsive landing page mockup focusing on user conversion.',
-          estimated_time: 90,
-        },
-        {
-          title: 'Build a Design System',
-          description: 'Create a consistent design system with colors, typography, and component patterns.',
-          estimated_time: 120,
-        },
-        {
-          title: 'Create User Flow Diagram',
-          description: 'Design a complete user journey for an e-commerce checkout process.',
-          estimated_time: 60,
+          learning_outcomes: [
+            'WebSocket implementation',
+            'D3.js data visualization',
+            'Real-time state management'
+          ],
+          prerequisites: ['JavaScript async programming', 'Basic D3.js'],
+          success_criteria: [
+            'Live data updates work',
+            'Visualizations render correctly',
+            'Error handling implemented'
+          ]
         }
       ],
       'Python Programming': [
         {
-          title: 'Build a Web Scraper',
-          description: 'Create a Python script to scrape data from a website and save it to CSV.',
-          estimated_time: 50,
-        },
-        {
-          title: 'Implement Data Analysis',
-          description: 'Analyze a dataset using pandas and create visualizations with matplotlib.',
+          title: 'Build an AI-powered News Aggregator',
+          description: 'Create a Python script that aggregates news from multiple sources and uses NLP for content categorization.',
           estimated_time: 75,
+          learning_outcomes: [
+            'API integration',
+            'Natural Language Processing',
+            'Data aggregation patterns'
+          ],
+          prerequisites: ['Python basics', 'HTTP requests knowledge'],
+          success_criteria: [
+            'Multiple sources integrated',
+            'NLP categorization works',
+            'Error handling in place'
+          ]
+        }
+      ],
+      'UI/UX Design': [
+        {
+          title: 'Design a Dark Mode Implementation',
+          description: 'Create a comprehensive dark mode design system with accessibility considerations and smooth transitions.',
+          estimated_time: 90,
+          learning_outcomes: [
+            'Color theory in dark modes',
+            'Accessibility standards',
+            'CSS custom properties'
+          ],
+          prerequisites: ['Basic design principles', 'CSS knowledge'],
+          success_criteria: [
+            'WCAG compliance achieved',
+            'Smooth mode transitions',
+            'System preference detection'
+          ]
         }
       ]
     };
