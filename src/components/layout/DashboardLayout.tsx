@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Zap } from 'lucide-react';
+import logoSvg from '../../assets/logo/logo.svg';
 
 export const DashboardLayout: React.FC = () => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#020617] relative overflow-hidden">
       {/* Enhanced cyberpunk grid background with hexagonal pattern */}
@@ -49,7 +60,7 @@ export const DashboardLayout: React.FC = () => {
       <div className="fixed top-0 left-0 right-0 h-8 bg-[#020617]/80 border-b border-cyan-400/20 backdrop-blur-sm z-50 px-4 flex items-center justify-between text-xs font-mono">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-cyan-400">
-            <img src="/src/assets/logo/logo.svg" alt="Questfy Logo" className="w-auto h-[4.5rem]" />
+            <img src={logoSvg} alt="Questfy Logo" className="w-auto h-[4.5rem]" />
             <span>SYSTEM ACTIVE</span>
           </div>
           <div className="flex items-center gap-2 text-cyan-400/70">
@@ -58,7 +69,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
         </div>
         <div className="text-cyan-400/70">
-          {new Date().toLocaleTimeString()}
+          {currentTime.toLocaleTimeString()}
         </div>
       </div>
       

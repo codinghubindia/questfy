@@ -275,28 +275,96 @@ export const dbService = {
   },
 
   async completeQuest(questId: string) {
-    const { data, error } = await supabase
-      .from('quests')
-      .update({ 
-        completed: true,
-        completed_at: new Date().toISOString()
-      })
-      .eq('id', questId)
-      .select()
-      .single();
+    try {
+      // Start a transaction by getting the quest data first
+      const { data: quest, error: questError } = await supabase
+        .from('quests')
+        .update({ 
+          completed: true,
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', questId)
+        .select()
+        .single();
 
-    if (data && !error) {
-      // Also create a quest completion record
-      await supabase
+      if (questError || !quest) {
+        throw new Error(questError?.message || 'Failed to complete quest');
+      }
+
+      // Create quest completion record
+      const { error: completionError } = await supabase
         .from('quest_completions')
         .insert([{
-          user_id: data.user_id,
+          user_id: quest.user_id,
           quest_id: questId,
-          xp_gained: data.xp_reward || 10
+          xp_gained: quest.xp_reward || 10,
+          completed_at: new Date().toISOString()
         }]);
+
+      if (completionError) {
+        throw new Error(completionError.message);
+      }
+
+      // Update profile's total XP
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('total_xp, level')
+        .eq('id', quest.user_id)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error(profileError?.message || 'Failed to get profile');
+      }
+
+      const newTotalXp = (profile.total_xp || 0) + (quest.xp_reward || 10);
+      const newLevel = Math.floor(newTotalXp / 500) + 1;
+
+      // Only update if XP or level has changed
+      if (newTotalXp !== profile.total_xp || newLevel !== profile.level) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ 
+            total_xp: newTotalXp,
+            level: newLevel
+          })
+          .eq('id', quest.user_id);
+
+        if (updateError) {
+          throw new Error(updateError.message);
+        }
+      }
+
+      // Update skill XP if quest is associated with a skill
+      if (quest.skill_id) {
+        const { data: skill, error: skillError } = await supabase
+          .from('skills')
+          .select('current_xp, level')
+          .eq('id', quest.skill_id)
+          .single();
+
+        if (!skillError && skill) {
+          const newSkillXp = (skill.current_xp || 0) + (quest.xp_reward || 10);
+          const skillLevel = Math.floor(newSkillXp / 100) + 1;
+
+          // Only update if XP or level has changed
+          if (newSkillXp !== skill.current_xp || skillLevel !== skill.level) {
+            await supabase
+              .from('skills')
+              .update({ 
+                current_xp: newSkillXp,
+                level: skillLevel,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', quest.skill_id);
+          }
+        }
+      }
+
+      return { data: quest, error: null };
+    } catch (error) {
+      console.error('Error completing quest:', error);
+      return { data: null, error };
     }
-    
-    return { data, error };
   },
 
   // Delete all quests for a user (for account deletion)

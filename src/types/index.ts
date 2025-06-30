@@ -51,7 +51,7 @@ export interface Quest {
   created_at: string;
   completed_at?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
-  status?: 'pending' | 'accepted' | 'rejected';
+  status?: 'pending' | 'accepted' | 'rejected' | 'completed';
   skills?: {
     name: string;
     category: string;

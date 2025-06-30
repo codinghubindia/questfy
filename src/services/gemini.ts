@@ -2,10 +2,12 @@
 const GEMINI_API_KEYS = [
   import.meta.env.VITE_GEMINI_API_KEY,
   import.meta.env.VITE_GEMINI_API_KEY_BACKUP1,
-  import.meta.env.VITE_GEMINI_API_KEY_BACKUP2
+  import.meta.env.VITE_GEMINI_API_KEY_BACKUP2,
+  import.meta.env.VITE_GEMINI_API_KEY_BACKUP3,
+  import.meta.env.VITE_GEMINI_API_KEY_BACKUP4
 ].filter(Boolean); // Filter out undefined or empty keys
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 interface QuestGenerationRequest {
   skillName: string;
@@ -27,10 +29,10 @@ export const geminiService = {
           }]
         }],
         generationConfig: {
-          temperature: 0.8,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
+          temperature: 0.7,
+          topK: 20,
+          topP: 0.8,
+          maxOutputTokens: 512,
         },
         safetySettings: [
           {
@@ -64,7 +66,13 @@ export const geminiService = {
 
       const result = await response.json();
 
-      if (!result.candidates || !result.candidates[0]) {
+      // Check for MAX_TOKENS error
+      if (result.candidates?.[0]?.finishReason === 'MAX_TOKENS') {
+        console.warn('Gemini API hit token limit, falling back to mock data');
+        return { success: false, error: new Error('MAX_TOKENS') };
+      }
+
+      if (!result.candidates?.[0]?.content) {
         console.error('Invalid API response structure:', result);
         throw new Error('Invalid API response structure');
       }
@@ -73,40 +81,22 @@ export const geminiService = {
       const candidate = result.candidates[0];
       let questText = '';
 
-      // Handle different response structures
+      // Handle the new response structure
       if (candidate.content?.parts?.[0]?.text) {
         questText = candidate.content.parts[0].text;
-      } else if (candidate.text) {
-        questText = candidate.text;
+      } else if (candidate.content?.text) {
+        questText = candidate.content.text;
       } else {
-        console.error('Unexpected response structure:', candidate);
-        throw new Error('Unexpected response structure');
+        console.warn('Unexpected response structure, falling back to mock data:', candidate);
+        return { success: false, error: new Error('Invalid response format') };
       }
 
-      
-      // Try to find JSON in the response text
-      const jsonMatch = questText.match(/\{[\s\S]*?\}/);
-      if (!jsonMatch) {
-        // If no JSON found, try to parse the entire response as JSON
-        try {
-          // Clean up the text - remove any markdown formatting if present
-          const cleanText = questText.replace(/```json\n|\n```/g, '').trim();
-          const quest = JSON.parse(cleanText);
-          return {
-            success: true,
-            data: {
-              ...quest,
-              difficulty: params.difficulty,
-            }
-          };
-        } catch (parseError) {
-          console.error('No JSON found in response:', questText);
-          throw new Error('No valid JSON found in response');
-        }
-      }
+      // Clean up the text and try to parse it
+      const cleanText = questText.replace(/```json\n|\n```/g, '').trim();
       
       try {
-        const quest = JSON.parse(jsonMatch[0]);
+        // First try to parse the entire cleaned text
+        const quest = JSON.parse(cleanText);
         return {
           success: true,
           data: {
@@ -115,19 +105,97 @@ export const geminiService = {
           }
         };
       } catch (parseError) {
-        console.error('JSON Parse Error:', parseError, 'Text:', jsonMatch[0]);
-        throw new Error('Failed to parse quest JSON');
+        // If that fails, try to find and parse a JSON object in the text
+        const jsonMatch = questText.match(/\{[\s\S]*?\}/);
+        if (!jsonMatch) {
+          // If no JSON object is found, try to extract key-value pairs from the text
+          const extractedData = this.extractQuestData(questText);
+          if (extractedData) {
+            return {
+              success: true,
+              data: {
+                ...extractedData,
+                difficulty: params.difficulty,
+              }
+            };
+          }
+          console.warn('No valid data found in response, falling back to mock data:', questText);
+          return { success: false, error: new Error('No valid data found') };
+        }
+        
+        try {
+          const quest = JSON.parse(jsonMatch[0]);
+          return {
+            success: true,
+            data: {
+              ...quest,
+              difficulty: params.difficulty,
+            }
+          };
+        } catch (parseError) {
+          console.warn('Failed to parse quest data, falling back to mock data:', jsonMatch[0]);
+          return { success: false, error: new Error('Parse error') };
+        }
       }
     } catch (error) {
-      console.error('API call failed:', error);
+      console.warn('API call failed, falling back to mock data:', error);
       return { success: false, error };
     }
   },
 
-  async generateQuest(params: QuestGenerationRequest) {
+  // Helper function to extract quest data from text if JSON parsing fails
+  extractQuestData(text: string) {
+    const lines = text.split('\n');
+    const data: any = {};
+    
+    for (const line of lines) {
+      if (line.includes(':')) {
+        const [key, ...valueParts] = line.split(':');
+        const value = valueParts.join(':').trim();
+        
+        // Convert the key to camelCase
+        const cleanKey = key.trim()
+          .toLowerCase()
+          .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
+        
+        // Handle arrays
+        if (value.startsWith('[') && value.endsWith(']')) {
+          try {
+            data[cleanKey] = JSON.parse(value);
+          } catch {
+            data[cleanKey] = value.slice(1, -1).split(',').map(item => item.trim());
+          }
+        }
+        // Handle numbers
+        else if (!isNaN(Number(value))) {
+          data[cleanKey] = Number(value);
+        }
+        // Handle strings
+        else {
+          data[cleanKey] = value.replace(/^["']|["']$/g, ''); // Remove quotes if present
+        }
+      }
+    }
 
+    // Validate that we have the minimum required fields
+    if (data.title && data.description) {
+      return {
+        title: data.title,
+        description: data.description,
+        estimated_time: data.estimatedTime || 30,
+        learning_outcomes: data.learningOutcomes || [],
+        prerequisites: data.prerequisites || [],
+        success_criteria: data.successCriteria || []
+      };
+    }
+
+    return null;
+  },
+
+  async generateQuest(params: QuestGenerationRequest) {
+    // If no API keys available, use mock data
     if (GEMINI_API_KEYS.length === 0) {
-      console.error('No API keys available');
+      console.warn('No API keys available, using mock data');
       return this.getMockQuest(params);
     }
 
@@ -139,7 +207,8 @@ export const geminiService = {
       }
     }
 
-    // If all API keys fail, fall back to mock data
+    // If all API keys fail or return MAX_TOKENS, fall back to mock data
+    console.warn('All API attempts failed or hit token limit, using mock data');
     return this.getMockQuest(params);
   },
 
@@ -152,30 +221,20 @@ export const geminiService = {
 
     const skillLevelContext = `Level ${params.skillLevel} (${params.difficulty}) focusing on ${difficultyLevels[params.difficulty]}`;
 
-    return `You are an expert ${params.skillName} mentor. Create a practical quest for a student at ${skillLevelContext}.
+    return `Generate a practical ${params.skillName} quest for level ${params.skillLevel} (${params.difficulty}).
 
-Previous quests completed: ${params.previousQuests?.join(", ") || "None"}
-Category focus: ${params.category || "General"}
+Previous quests: ${params.previousQuests?.join(", ") || "None"}
+Category: ${params.category || "General"}
 
-IMPORTANT: Respond with ONLY a valid JSON object. Do not include any other text, markdown formatting, or explanations.
-
-The JSON object must have this exact structure:
+Return ONLY a JSON object with this structure (no other text):
 {
-  "title": "Quest title (max 60 chars)",
-  "description": "Clear, actionable instructions with specific requirements (max 200 chars)",
-  "estimated_time": number_in_minutes,
-  "learning_outcomes": ["List of 2-3 specific skills or concepts learned"],
-  "prerequisites": ["List of required knowledge/tools"],
-  "success_criteria": ["2-3 specific checkpoints to verify completion"]
-}
-
-Requirements for the quest:
-1. Must be hands-on and practical
-2. Must be completable in 15-90 minutes
-3. Must teach valuable real-world skills
-4. Must match the skill level (${params.skillLevel}) and difficulty (${params.difficulty})
-5. Must build upon previous knowledge
-6. Must have clear, measurable outcomes`;
+  "title": "60 chars max",
+  "description": "200 chars max",
+  "estimated_time": number,
+  "learning_outcomes": ["2-3 items"],
+  "prerequisites": ["required items"],
+  "success_criteria": ["2-3 items"]
+}`;
   },
 
   getMockQuest(params: QuestGenerationRequest) {
@@ -249,10 +308,28 @@ Requirements for the quest:
             'System preference detection'
           ]
         }
+      ],
+      'Default': [
+        {
+          title: 'Build a Portfolio Project',
+          description: 'Create a showcase project that demonstrates your skills in this area.',
+          estimated_time: 60,
+          learning_outcomes: [
+            'Project planning',
+            'Implementation skills',
+            'Documentation'
+          ],
+          prerequisites: ['Basic knowledge in the field'],
+          success_criteria: [
+            'Project completed',
+            'Documentation written',
+            'Code/design reviewed'
+          ]
+        }
       ]
     };
 
-    const skillQuests = mockQuests[params.skillName as keyof typeof mockQuests] || mockQuests['JavaScript Programming'];
+    const skillQuests = mockQuests[params.skillName as keyof typeof mockQuests] || mockQuests['Default'];
     const randomQuest = skillQuests[Math.floor(Math.random() * skillQuests.length)];
 
     return {

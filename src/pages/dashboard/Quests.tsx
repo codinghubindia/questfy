@@ -152,45 +152,62 @@ export const Quests: React.FC = () => {
 
     setProcessingQuest(questId);
     try {
-      // Mark quest as completed
-      await dbService.completeQuest(questId);
-      
-      // Update quest in state
+      // Update local state immediately for better UX
       setQuests(quests.map(q => 
         q.id === questId 
-          ? { ...q, completed: true, completed_at: new Date().toISOString() }
+          ? { ...q, completed: true, completed_at: new Date().toISOString(), status: 'completed' }
           : q
       ));
 
-      // Add experience to the skill
+      // Update skill state immediately if available
       if (quest.skill_id) {
         const skill = skills.find(s => s.id === quest.skill_id);
         if (skill) {
           const newXP = skill.current_xp + quest.xp_reward;
           const newLevel = Math.floor(newXP / 100) + 1;
-
-          await dbService.updateSkill(skill.id, {
-            current_xp: newXP,
-            level: newLevel,
-            last_practiced: new Date().toISOString(),
-          });
-
-          // Update skill in state
+          
           setSkills(skills.map(s => 
             s.id === skill.id 
               ? { ...s, current_xp: newXP, level: newLevel }
               : s
           ));
-
-          showNotification({
-            type: 'success',
-            title: 'Mission Completed!',
-            message: `Congratulations! You earned ${quest.xp_reward} XP${newLevel > skill.level ? ` and leveled up to ${newLevel}!` : '!'}`,
-          });
         }
       }
+
+      // Call backend to update everything
+      await dbService.completeQuest(questId);
+
+      showNotification({
+        type: 'success',
+        title: 'Mission Completed!',
+        message: `Congratulations! You earned ${quest.xp_reward} XP!`,
+      });
     } catch (error) {
       console.error('Error completing quest:', error);
+      
+      // Revert local state changes on error
+      setQuests(quests.map(q => 
+        q.id === questId 
+          ? { ...q, completed: false, completed_at: undefined, status: 'accepted' }
+          : q
+      ));
+
+      if (quest.skill_id) {
+        const skill = skills.find(s => s.id === quest.skill_id);
+        if (skill) {
+          setSkills(skills.map(s => 
+            s.id === skill.id 
+              ? { ...s }
+              : s
+          ));
+        }
+      }
+
+      showNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to complete the quest. Please try again.',
+      });
     }
     setProcessingQuest(null);
   };
@@ -371,7 +388,7 @@ export const Quests: React.FC = () => {
 
           {/* Quests List */}
           {filteredQuests.length === 0 && skills.length > 0 ? (
-            <Card className="p-8 sm:p-12 text-center bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-2 border-purple-500/30">
+            <Card className="p-8 sm:p-12 text-center bg-gradient-to-br from-blue-500/80 to-blue-500/20 border-2 border-purple-500/30">
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
               </div>

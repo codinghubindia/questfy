@@ -12,7 +12,7 @@ import {
   Power
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { dbService } from '../../services/supabase';
+import { dbService, supabase } from '../../services/supabase';
 import logoSvg from '../../assets/logo/logo.svg';
 
 const navItems = [
@@ -48,6 +48,74 @@ export const Sidebar: React.FC = () => {
     };
 
     loadAgentStats();
+
+    // Subscribe to real-time XP updates from multiple tables
+    const channel = supabase.channel('agent-stats-multi');
+    
+    // Listen for quest completions
+    channel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'quest_completions',
+        filter: `user_id=eq.${user?.id}`
+      },
+      async () => {
+        await loadAgentStats();
+      }
+    );
+
+    // Listen for quest status changes
+    channel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'agent_quests',
+        filter: `user_id=eq.${user?.id}`
+      },
+      async () => {
+        await loadAgentStats();
+      }
+    );
+
+    // Listen for profile XP updates
+    channel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'profiles',
+        filter: `id=eq.${user?.id}`
+      },
+      async () => {
+        await loadAgentStats();
+      }
+    );
+
+    // Listen for skill updates
+    channel.on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'skills',
+        filter: `user_id=eq.${user?.id}`
+      },
+      async () => {
+        await loadAgentStats();
+      }
+    );
+
+    channel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+      }
+    });
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, [user]);
 
   const handleSignOut = async () => {

@@ -117,10 +117,13 @@ export const Skills: React.FC = () => {
         </div>
         <Button 
           onClick={() => setShowAddForm(true)} 
-          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/25"
+          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/25 transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/40 relative group"
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Register Skill
+          <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-300" />
+          <div className="relative flex items-center">
+            <Plus className="w-4 h-4 mr-2 animate-pulse" />
+            Register Skill
+          </div>
         </Button>
       </div>
 

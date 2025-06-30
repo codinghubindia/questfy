@@ -20,7 +20,7 @@ export const Signup: React.FC = () => {
   const [error, setError] = useState('');
   const [signupComplete, setSignupComplete] = useState(false);
   
-  const { signUp } = useAuth();
+  const { signUp, signIn } = useAuth();
   const navigate = useNavigate();
   const { notification, isVisible, showNotification, hideNotification } = useNotification();
 
@@ -58,40 +58,65 @@ export const Signup: React.FC = () => {
       return;
     }
 
-    const { data, error } = await signUp(formData.email, formData.password, formData.name);
-    
-    if (error) {
-      setError(error.message);
+    try {
+      const { data, error } = await signUp(formData.email, formData.password, formData.name);
+      
+      if (error) {
+        setError(error.message);
+        showNotification({
+          type: 'error',
+          title: 'Registration Failed',
+          message: error.message || 'Failed to create agent profile. Please try again.',
+        });
+      } else if (data?.user) {
+        // Check if email confirmation is required
+        if (data.user.email_confirmed_at || data.user.confirmed_at) {
+          // User is immediately confirmed (email confirmation disabled or pre-verified)
+          showNotification({
+            type: 'success',
+            title: 'Agent Initialized Successfully',
+            message: `Welcome to the system, Agent ${formData.name}! Redirecting to command center...`,
+          });
+          
+          // Try to sign in automatically
+          try {
+            const { error: signInError } = await signIn(formData.email, formData.password);
+            if (!signInError) {
+              setTimeout(() => {
+                navigate('/dashboard');
+              }, 1500);
+            } else {
+              // If auto-login fails, redirect to login page
+              setTimeout(() => {
+                navigate('/login');
+              }, 1500);
+            }
+          } catch (signInError) {
+            // If auto-login fails, redirect to login page
+            setTimeout(() => {
+              navigate('/login');
+            }, 1500);
+          }
+        } else {
+          // Email confirmation required
+          setSignupComplete(true);
+          showNotification({
+            type: 'info',
+            title: 'Agent Profile Created',
+            message: `Agent ${formData.name} profile created! Please check your email to activate your account.`,
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
       showNotification({
         type: 'error',
-        title: 'Registration Failed',
-        message: error.message || 'Failed to create agent profile. Please try again.',
+        title: 'System Error',
+        message: 'An unexpected error occurred. Please try again.',
       });
-    } else if (data?.user) {
-      // Check if email confirmation is required
-      if (data.user.email_confirmed_at) {
-        // User is immediately confirmed (email confirmation disabled)
-        showNotification({
-          type: 'success',
-          title: 'Agent Initialized Successfully',
-          message: `Welcome to the system, Agent ${formData.name}! Redirecting to command center...`,
-        });
-        
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 2000);
-      } else {
-        // Email confirmation required
-        setSignupComplete(true);
-        showNotification({
-          type: 'info',
-          title: 'Agent Profile Created',
-          message: `Agent ${formData.name} profile created! Please check your email to activate your account.`,
-        });
-      }
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   // If signup is complete but email confirmation is pending

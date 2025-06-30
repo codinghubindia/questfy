@@ -54,6 +54,14 @@ export const QuestCard: React.FC<QuestCardProps> = ({
         accent: 'from-red-400 to-pink-500'
       };
     }
+    if (!quest.title) { // Empty quest card
+      return {
+        gradient: 'from-black/95 via-black/90 to-black/95',
+        border: 'border-gray-400/30',
+        glow: 'shadow-gray-500/15',
+        accent: 'from-gray-400 to-gray-500'
+      };
+    }
     return {
       gradient: 'from-[#060a14]/95 via-[#1a0725]/90 to-[#060a14]/95',
       border: 'border-purple-400/30',
