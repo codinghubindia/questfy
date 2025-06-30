@@ -114,6 +114,40 @@ export const QuestCard: React.FC<QuestCardProps> = ({
               
               <p className="text-white/80 mb-4 leading-relaxed text-sm sm:text-base break-words">{quest.description}</p>
               
+              {/* Additional Quest Information */}
+              {(quest.estimated_outcome || quest.prerequisites?.length > 0 || quest.success_criteria?.length > 0) && (
+                <div className="space-y-3 mb-4 text-sm">
+                  {quest.estimated_outcome && (
+                    <div className="bg-[#050810]/90 backdrop-blur-sm p-3 rounded-lg border border-white/10">
+                      <h4 className="text-cyan-400 font-semibold mb-1">Estimated Outcome</h4>
+                      <p className="text-white/80">{quest.estimated_outcome}</p>
+                    </div>
+                  )}
+                  
+                  {quest.prerequisites && quest.prerequisites.length > 0 && (
+                    <div className="bg-[#050810]/90 backdrop-blur-sm p-3 rounded-lg border border-white/10">
+                      <h4 className="text-purple-400 font-semibold mb-1">Prerequisites</h4>
+                      <ul className="list-disc list-inside text-white/80 space-y-1">
+                        {quest.prerequisites.map((prereq, index) => (
+                          <li key={index}>{prereq}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {quest.success_criteria && quest.success_criteria.length > 0 && (
+                    <div className="bg-[#050810]/90 backdrop-blur-sm p-3 rounded-lg border border-white/10">
+                      <h4 className="text-emerald-400 font-semibold mb-1">Success Criteria</h4>
+                      <ul className="list-disc list-inside text-white/80 space-y-1">
+                        {quest.success_criteria.map((criteria, index) => (
+                          <li key={index}>{criteria}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm flex-wrap">
                 {quest.skills && (
                   <div className="flex items-center gap-2 min-w-0 bg-[#050810]/90 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">

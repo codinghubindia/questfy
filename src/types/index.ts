@@ -39,6 +39,9 @@ export interface Quest {
   skill_id?: string;
   title: string;
   description?: string;
+  estimated_outcome?: string;
+  prerequisites?: string[];
+  success_criteria?: string[];
   is_urgent: boolean;
   is_important: boolean;
   deadline?: string;

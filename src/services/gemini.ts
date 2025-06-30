@@ -18,7 +18,6 @@ interface QuestGenerationRequest {
 export const geminiService = {
   async tryWithApiKey(apiKey: string, params: QuestGenerationRequest) {
     try {
-      console.log('Attempting API call with key:', apiKey.slice(0, 5) + '...');
       const prompt = this.constructPrompt(params);
       
       const requestBody = {
@@ -45,7 +44,6 @@ export const geminiService = {
         ]
       };
 
-      console.log('Making API request to:', GEMINI_API_URL);
       const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
         method: 'POST',
         headers: {
@@ -65,7 +63,6 @@ export const geminiService = {
       }
 
       const result = await response.json();
-      console.log('API Response:', result);
 
       if (!result.candidates || !result.candidates[0]) {
         console.error('Invalid API response structure:', result);
@@ -86,7 +83,6 @@ export const geminiService = {
         throw new Error('Unexpected response structure');
       }
 
-      console.log('Quest Text:', questText);
       
       // Try to find JSON in the response text
       const jsonMatch = questText.match(/\{[\s\S]*?\}/);
@@ -129,8 +125,6 @@ export const geminiService = {
   },
 
   async generateQuest(params: QuestGenerationRequest) {
-    console.log('Generating quest for:', params);
-    console.log('Available API keys:', GEMINI_API_KEYS.length);
 
     if (GEMINI_API_KEYS.length === 0) {
       console.error('No API keys available');
@@ -143,11 +137,9 @@ export const geminiService = {
       if (result.success) {
         return { data: result.data, error: null };
       }
-      console.log('API key failed, trying next key...');
     }
 
     // If all API keys fail, fall back to mock data
-    console.log('All API keys failed, using mock data');
     return this.getMockQuest(params);
   },
 
