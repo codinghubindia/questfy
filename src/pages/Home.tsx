@@ -6,7 +6,6 @@ import { Card } from '../components/ui/Card';
 
 // Import logo and sponsor SVG
 import logoSvg from '../assets/logo/logo.svg';
-import sponsorSvg from '../assets/sponser/logotext_poweredby_360w_bolt.svg';
 
 const features = [
   {
@@ -100,12 +99,6 @@ export const Home: React.FC = () => {
               </div>
             </div>
 
-            
-
-            {/* Sponsor Badge */}
-            <a href='https://bolt.new' target='_blank' className="block mt-12">
-              <img src={sponsorSvg} alt="Advanced Neural Systems" className="h-[3rem] w-auto mx-auto" />
-            </a>
 
             {/* Scroll Indicator */}
             <div className="absolute -bottom-[4.5rem] left-[30rem] transform -translate-x-1/2 flex flex-col items-center animate-bounce">
