@@ -22,11 +22,8 @@ async function generateIcons() {
         .resize(size, size)
         .png()
         .toFile(join(outputDir, `icon-${size}x${size}.png`));
-      console.log(`Generated ${size}x${size} icon`);
     }
-    console.log('All icons generated successfully!');
   } catch (error) {
-    console.error('Error generating icons:', error);
   }
 }
 
